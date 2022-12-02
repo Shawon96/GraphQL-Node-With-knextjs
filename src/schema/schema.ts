@@ -55,6 +55,12 @@ const bookType = new GraphQLObjectType({
         },
         genre:{
             type:GraphQLString
+        },
+        author:{
+            type:authorType,
+            resolve(parent, args){
+                return authors.filter(x=>x.id == parent.authorId)[0];
+            }
         }
     })
 })

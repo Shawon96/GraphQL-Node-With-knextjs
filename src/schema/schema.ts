@@ -1,48 +1,6 @@
 import {GraphQLInt, GraphQLList, GraphQLObjectType, GraphQLSchema, GraphQLString} from "graphql";
+import db from "../database/db";
 
-const books = [    {
-    title: 'My book',
-    id: '1',
-    genre: 'thriller',
-    authorId: '2',
-  },
-  {
-    title: 'History of the World',
-    id: '2',
-    genre: 'history',
-    authorId: '2',
-  },
-  {
-    title: 'The book of stories',
-    id: '3',
-    genre: 'fiction',
-    authorId: '3',
-  }]
-
- const authors = [ {
-                        name: 'Jack Jones',
-                        age: 55,
-                        rating: 5,
-                        id: '1',
-                    },
-                    {
-                        name: 'Verna Frag',
-                        age: 60,
-                        rating: 5,
-                        id: '2',
-                    },
-                    {
-                        name: 'Ron Tamara',
-                        age: 25,
-                        rating: 5,
-                        id: '3',
-                    },
-                    {
-                        name: 'Ranji Imaan',
-                        age: 35,
-                        rating: 5,
-                        id: '4',
-                    }]
 
 const bookType = new GraphQLObjectType({
     name :"book",
@@ -59,7 +17,7 @@ const bookType = new GraphQLObjectType({
         author:{
             type:authorType,
             resolve(parent, args){
-                return authors.filter(x=>x.id == parent.authorId)[0];
+                return db().select("*").from("books").where("id",parent.authorId).first();
             }
         }
     })
@@ -80,7 +38,7 @@ const authorType:GraphQLObjectType = new GraphQLObjectType({
         books:{
             type:new GraphQLList(bookType),
             resolve(parent,args){
-                return books.filter(x=>x.authorId == parent.id);
+                return db().select("*").from('authors').where('authorId', parent.authorId);
             }
         }
     })
@@ -93,14 +51,14 @@ const rootQuery = new GraphQLObjectType({
             type:bookType,
             args:{id: {type:GraphQLString}},
             resolve(parent, {id}){
-                return books.filter((b)=>b.id == id)[0];
+                return db().select().from('books').where('id', id).first();
             }
         },
         author:{
             type:authorType,
             args:{id: {type:GraphQLString}},
             resolve(parent, {id}){
-                return authors.filter((b)=>b.id == id)[0];
+                return db().select().from('authors').where('id', id).first();
             }
         }
     })

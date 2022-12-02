@@ -1,4 +1,4 @@
-import {GraphQLInt, GraphQLObjectType, GraphQLSchema, GraphQLString} from "graphql";
+import {GraphQLInt, GraphQLList, GraphQLObjectType, GraphQLSchema, GraphQLString} from "graphql";
 
 const books = [    {
     title: 'My book',
@@ -65,7 +65,7 @@ const bookType = new GraphQLObjectType({
     })
 })
 
-const authorType = new GraphQLObjectType({
+const authorType:GraphQLObjectType = new GraphQLObjectType({
     name :"Author",
     fields: ()=>({
         id:{
@@ -76,6 +76,12 @@ const authorType = new GraphQLObjectType({
         },
         rating:{
             type:GraphQLInt
+        },
+        books:{
+            type:new GraphQLList(bookType),
+            resolve(parent,args){
+                return books.filter(x=>x.authorId == parent.id);
+            }
         }
     })
 })

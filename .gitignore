@@ -1,0 +1,3 @@
+# keep Media and Media/img as empty dirs and ignore anything added to them - hoss
+
+/node_modules
